@@ -2,7 +2,8 @@ import logging
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
@@ -26,6 +27,7 @@ app = FastAPI(
         "- 응답 헤더 `X-Process-Time`: 서버 처리 시간"
     ),
     version="1.0.0",
+    docs_url=None,  # 기본 Swagger 페이지 대신 아래에서 파비콘을 바꾼 /docs 를 직접 만듦
 )
 
 register_exception_handlers(app)
@@ -48,6 +50,23 @@ app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads"
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 if FRONTEND_DIR.exists():
     app.mount("/web", StaticFiles(directory=FRONTEND_DIR, html=True), name="web")
+
+
+# 파비콘: 카트 속 고양이 얼굴. 브라우저는 주소창 아이콘을 /favicon.ico 에서 찾음
+FAVICON = FRONTEND_DIR / "assets" / "favicon" / "favicon.ico"
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(FAVICON)
+
+
+# Swagger 문서 페이지. 기본과 같고 탭 아이콘만 우리 고양이로 바꿈
+@app.get("/docs", include_in_schema=False)
+async def swagger_ui():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url, title=f"{settings.APP_NAME} - Swagger UI", swagger_favicon_url="/favicon.ico"
+    )
 
 
 # 주소만 치고 들어오면(/) 프론트로 보내 줌. Swagger 문서에는 안 보이게
