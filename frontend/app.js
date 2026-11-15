@@ -3,13 +3,67 @@
 
 // 상수
 
+// icon: 홈 상품 그림을 작게 줄인 아이콘 (이모지 대신 같은 그림체로 통일)
+// example: 글쓰기 화면의 제목/내용 예시 (카테고리마다 다르게)
 const CATEGORIES = {
-  LUNCH: { emoji: "🍱", label: "오늘 점심" },
-  CAT: { emoji: "🐱", label: "고양이 자랑" },
-  SKY: { emoji: "☁️", label: "오늘의 하늘" },
-  HAUL: { emoji: "🛍️", label: "산 거 자랑" },
-  CHAT: { emoji: "💬", label: "잡담" },
+  LUNCH: {
+    icon: "assets/icons/lunch.png", label: "오늘 점심",
+    example: { title: "회사 앞 김치찌개 정식", content: "반찬이 여덟 개나 나왔다. 계란말이가 제일 맛있었음" },
+  },
+  CAT: {
+    icon: "assets/icons/cat.png", label: "고양이 자랑",
+    example: { title: "창가에서 낮잠 자는 치즈", content: "햇빛 자리를 또 뺏겼다. 오늘도 고양이 승" },
+  },
+  SKY: {
+    icon: "assets/icons/sky.png", label: "오늘의 하늘",
+    example: { title: "퇴근길 분홍 노을", content: "버스 기다리다 올려다봤는데 하늘이 솜사탕 색이었다" },
+  },
+  HAUL: {
+    icon: "assets/icons/haul.png", label: "산 거 자랑",
+    example: { title: "드디어 산 머그컵", content: "3주 고민하다 결국 샀다. 커피가 두 배로 맛있는 기분" },
+  },
+  CHAT: {
+    icon: "assets/icons/chat.png", label: "잡담",
+    example: { title: "엘리베이터에서 생긴 일", content: "처음 본 사람이랑 같은 노래를 흥얼거리고 있었다" },
+  },
 };
+
+// 카테고리 아이콘 <img>. 장식용이라 alt는 비움 (글자 라벨이 옆에 있음)
+function catIcon(key, cls = "cat-icon") {
+  const c = CATEGORIES[key] ?? CATEGORIES.CHAT;
+  return `<img class="${cls}" src="${c.icon}" alt="" aria-hidden="true" />`;
+}
+
+// 손그림 선 아이콘 (SVG). 일부러 선을 살짝 삐뚤게 그려서 손으로 그린 느낌
+// 색은 글자색(currentColor)을 따라감 -> 선택되면 같이 빨개짐
+const DOODLE_PATHS = {
+  latest: ["M12 3.4c4.8-.3 8.6 3.5 8.5 8.4-.1 4.8-3.9 8.4-8.6 8.3-4.8-.1-8.5-3.8-8.3-8.6.2-4.5 3.8-7.9 8.4-8.1z", "M12.2 7.4l-.1 4.9 3.3 2.1"],
+  popular: ["M12 19.6c-4.4-3-7.7-6-7.6-9.7.1-2.4 2-4.2 4.2-4.1 1.6.1 2.8 1.1 3.4 2.4.8-1.4 2.1-2.5 3.7-2.4 2.3.1 4 2 3.8 4.4-.3 3.6-3.6 6.4-7.5 9.4z"],
+  lock: ["M6.4 11.3c3.7-.4 7.4-.3 11.1 0 .3 2.6.3 5.3 0 7.9-3.7.3-7.4.3-11.1 0-.3-2.7-.3-5.3 0-7.9z", "M8.9 11.1V8.3c0-2 1.4-3.4 3.2-3.4s3.2 1.5 3.2 3.4v2.8", "M12 14.6v1.6"],
+  friends: ["M9.1 11.3c1.6 0 2.8-1.3 2.8-2.9S10.7 5.6 9.1 5.6 6.3 6.8 6.3 8.4s1.2 2.9 2.8 2.9z", "M3.8 18.7c.6-3 2.6-4.8 5.3-4.8s4.6 1.8 5.2 4.8", "M15.7 11c1.4.1 2.5-1 2.5-2.4s-1-2.5-2.5-2.5", "M16.6 13.8c2 .4 3.3 2 3.6 4.7"],
+  eye: ["M2.9 12.2c2.1-3.9 5.3-6 9.1-6s7 2.1 9.1 5.9c-2.1 3.9-5.3 6-9.1 6s-7-2.1-9.1-5.9z", "M12 14.9c1.6 0 2.8-1.3 2.8-2.8S13.6 9.3 12 9.3s-2.8 1.3-2.8 2.8 1.2 2.8 2.8 2.8z"],
+  comment: ["M4.6 6.6c0-1.3.9-2.2 2.2-2.2h10.5c1.3 0 2.2.9 2.2 2.2v6.9c0 1.3-1 2.3-2.3 2.3h-7.1l-3.9 3.3.5-3.3c-1.2 0-2.1-1-2.1-2.3z"],
+  camera: ["M4.3 8.5c0-1 .7-1.7 1.7-1.7h2.2l1.4-2.2h4.8l1.4 2.2H18c1 0 1.7.7 1.7 1.7v8.8c0 1-.8 1.7-1.7 1.7H6c-1 0-1.7-.7-1.7-1.7z", "M12.1 16.4c1.8 0 3.2-1.5 3.2-3.3s-1.5-3.2-3.3-3.2-3.2 1.5-3.2 3.3 1.5 3.2 3.3 3.2z"],
+  cart: ["M3.4 4.9h2.4l2.1 9.7h9.5l2-6.9H7", "M9.6 19.5c.7 0 1.2-.6 1.2-1.2 0-.7-.6-1.2-1.2-1.2-.7 0-1.2.6-1.2 1.2 0 .7.6 1.2 1.2 1.2z", "M16.4 19.5c.7 0 1.2-.6 1.2-1.2 0-.7-.6-1.2-1.2-1.2-.7 0-1.2.6-1.2 1.2 0 .7.6 1.2 1.2 1.2z"],
+  check: ["M5.4 12.8l4.1 3.9 9.1-9.8"],
+  plus: ["M12.1 5.4l-.2 13.2", "M5.5 12.3l13-.2"],
+  close: ["M6.2 6.4l11.5 11.3", "M17.6 6.2L6.4 17.8"],
+  inbox: ["M4.3 13.2l2.2-7.6h11l2.3 7.6v5.3H4.3z", "M4.4 13.2h4.4l1 2h4.4l1-2h4.5"],
+  send: ["M4.1 11.6l15.6-6.9-5.8 14.9-2.7-5.6z", "M11.2 14l8.4-9.2"],
+};
+
+function doodle(name, cls = "doodle") {
+  const paths = (DOODLE_PATHS[name] ?? []).map((d) => `<path d="${d}"/>`).join("");
+  return `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+}
+
+// 레일에 티켓을 거는 빨간 집게 (손그림 SVG). 위쪽 철사 고리가 레일을 감싸고, 아래 몸통이 영수증을 물고 있음
+const CLIP_SVG = `<svg viewBox="0 0 40 50" aria-hidden="true">
+  <path class="wire" d="M12.5 27.5c-1.4-8.8.4-17.4 7.4-19.6 7.3 1.9 9 10.9 7.6 19.6"/>
+  <path class="wire" d="M15.6 27.3c-.8-6.4.4-12.3 4.4-14.1 4.1 1.6 4.9 7.7 4.2 14.1"/>
+  <path class="body" d="M6.4 27.1c9.2-.9 18.4-.8 27.3.2l2.4 14.5c-10.4 2.7-21 2.6-32 .1z"/>
+  <path class="shine" d="M9.6 31.4c6.7-.6 13.5-.6 20.2 0"/>
+</svg>`;
 const PRODUCTS = {
   LUNCH: { label: "도시락", image: "assets/products/lunch.png" },
   CAT: { label: "고양이 캔", image: "assets/products/cat.png" },
@@ -131,41 +185,41 @@ function logout(showToast = true) {
 // 공통 조각
 
 function clipHtml(extra = "") {
-  return `<span class="clip ${extra}" aria-hidden="true"></span>`;
+  return `<span class="clip ${extra}" aria-hidden="true">${CLIP_SVG}</span>`;
 }
 
 function photoHtml(p, cls = "sticker") {
   if (p.image_url) {
     return `<img class="${cls}" src="${esc(p.image_url)}" alt="${esc(p.title)} 사진" loading="lazy" />`;
   }
-  const c = CATEGORIES[p.category] ?? CATEGORIES.CHAT;
-  return `<div class="${cls} placeholder" aria-hidden="true">${c.emoji}</div>`;
+  const product = PRODUCTS[p.category] ?? PRODUCTS.CHAT;
+  return `<div class="${cls} placeholder" aria-hidden="true"><img src="${product.image}" alt="" /></div>`;
 }
 
 function whoHtml(p) {
   // 익명성: PUBLIC 글은 author가 null -> 익명
-  if (p.is_mine) return `<span class="who">🛒 내 티켓</span>`;
-  if (p.author) return `<span class="who">👥 ${esc(p.author.nickname)}</span>`;
-  return `<span class="who">🔒 익명</span>`;
+  if (p.is_mine) return `<span class="who">${doodle("cart")}내 티켓</span>`;
+  if (p.author) return `<span class="who">${doodle("friends")}${esc(p.author.nickname)}</span>`;
+  return `<span class="who">${doodle("lock")}익명</span>`;
 }
 
 function ticketHtml(p) {
   const c = CATEGORIES[p.category] ?? CATEGORIES.CHAT;
   return `
     <article class="ticket" style="--tilt:${tilt(p.id)}" data-action="open-ticket" data-id="${p.id}" tabindex="0"
-      aria-label="${esc(p.title)} 티켓 뽑기">
+      aria-label="${esc(p.title)} 티켓 보기">
       ${clipHtml()}
       <div class="receipt">
         <div class="ticket-no">TODAY'S TICKET ${ticketNo(p.ticket_no)}</div>
         <hr class="dash" />
         ${photoHtml(p)}
         <div class="starburst" title="나도 담기 수">${p.like_count}<small>담기</small></div>
-        <span class="bubble">${c.emoji} ${c.label}</span>
+        <span class="bubble">${catIcon(p.category)}${c.label}</span>
         <div class="ticket-title">${esc(p.title)}</div>
         <hr class="dash" />
         <div class="meta">
           ${whoHtml(p)}
-          <span>✋ ${p.pull_count} · 💬 ${p.comment_count}</span>
+          <span class="counts" title="조회수 · 댓글 수">${doodle("eye")}${p.pull_count}${doodle("comment")}${p.comment_count}</span>
         </div>
       </div>
     </article>`;
@@ -220,21 +274,21 @@ function chooseProduct(category) {
 
 async function renderRail() {
   const f = state.feed;
-  const chips = [`<button class="chip ${f.category ? "" : "on"}" data-action="filter" data-cat="">전체</button>`]
+  const chips = [`<button class="chip ${f.category ? "" : "on"}" data-action="filter" data-cat=""><img class="cat-icon" src="assets/icons/cart.png" alt="" aria-hidden="true" />전체</button>`]
     .concat(
       Object.entries(CATEGORIES).map(
         ([key, c]) =>
-          `<button class="chip ${f.category === key ? "on" : ""}" data-action="filter" data-cat="${key}"><span class="emo">${c.emoji}</span>${c.label}</button>`
+          `<button class="chip ${f.category === key ? "on" : ""}" data-action="filter" data-cat="${key}">${catIcon(key)}${c.label}</button>`
       )
     )
     .join("");
 
   app().innerHTML = `
     <section>
-      <p class="flyer-sub">티켓을 눌러서 뽑아 보세요</p>
+      <p class="flyer-sub">티켓을 눌러서 구경해 보세요</p>
       <div class="toolbar">
         ${chips}
-        <button class="chip ${f.sort === "popular" ? "on" : ""}" data-action="sort">${f.sort === "popular" ? "🔥 인기순" : "🕒 최신순"}</button>
+        <button class="chip ${f.sort === "popular" ? "on" : ""}" data-action="sort">${f.sort === "popular" ? doodle("popular") + "인기순" : doodle("latest") + "최신순"}</button>
         <label class="toggle"><input type="checkbox" data-action="today" ${f.today ? "checked" : ""}/><span class="box" aria-hidden="true"></span><span class="toggle-text">오늘 걸린 것만</span></label>
       </div>
       <div class="rail-wrap">
@@ -269,7 +323,7 @@ async function loadFeed(reset) {
       <div class="empty-rail">
         <b>레일이 비어 있어요</b>
         <p class="muted">첫 티켓을 걸어 보세요!</p>
-        <a class="btn red" href="#/hang">＋ 티켓 걸기</a>
+        <a class="btn red" href="#/home">${doodle("plus")}티켓 걸기</a>
       </div>`;
     return;
   }
@@ -277,16 +331,16 @@ async function loadFeed(reset) {
   track.innerHTML = f.items.map(ticketHtml).join("") + more;
 }
 
-// 화면: 티켓 뽑기 (상세 모달)
+// 화면: 티켓 상세 (모달)
 
 // 지금 열려 있는 티켓. 담기/리뷰 후에 상세를 다시 GET 하면 pull_count가 또 올라감
-// -> 한 번 뽑은 티켓은 여기 들고 있다가 화면만 다시 그림
+// -> 한 번 연 티켓은 여기 들고 있다가 화면만 다시 그림
 const detail = { post: null, comments: null };
 
 async function openTicket(id) {
   const body = document.getElementById("modal-body");
   document.getElementById("modal").hidden = false;
-  body.innerHTML = `<p class="loading">뽑는 중...</p>`;
+  body.innerHTML = `<p class="loading">불러오는 중...</p>`;
   try {
     const [post, comments] = await Promise.all([api(`/posts/${id}`), api(`/posts/${id}/comments?size=100`)]);
     detail.post = post;
@@ -338,22 +392,22 @@ function renderTicketDetail() {
   document.getElementById("modal-body").innerHTML = `
     <div class="sheet" id="detail">
       ${clipHtml("sheet-clip")}
-      <button class="close-x" data-action="close-modal" aria-label="닫기">✕</button>
+      <button class="close-x" data-action="close-modal" aria-label="닫기">${doodle("close")}</button>
       <div class="ticket-no">TODAY'S TICKET ${ticketNo(p.ticket_no)}</div>
       <hr class="dash" />
       ${photoHtml(p, "sticker detail-photo")}
-      <span class="bubble">${c.emoji} ${c.label}</span>
+      <span class="bubble">${catIcon(p.category)}${c.label}</span>
       <h1 style="text-align:left;margin-top:8px">${esc(p.title)}</h1>
-      <div class="line">${whoHtml(p)} <span class="lock">${p.visibility === "FRIENDS" ? "👥 FRIENDS" : "🔒 PUBLIC"}</span></div>
+      <div class="line">${whoHtml(p)} <span class="lock">${p.visibility === "FRIENDS" ? doodle("friends") + "FRIENDS" : doodle("lock") + "PUBLIC"}</span></div>
       <hr class="dash" />
       <p class="detail-content">${esc(p.content)}</p>
       <hr class="dash" />
       <div class="line"><span>걸린 시각</span><b>${timeText(p.created_at)}</b></div>
-      <div class="line"><span>뽑힌 횟수</span><b>✋ ${p.pull_count}</b></div>
+      <div class="line"><span>조회수</span><b>${doodle("eye")}${p.pull_count}</b></div>
       <div class="line"><span>나도 담기</span><b>${p.like_count}</b></div>
       <div class="actions">
         <button class="btn like-btn ${p.liked_by_me ? "on" : ""}" data-action="like">
-          ${p.liked_by_me ? "✔ 담았어요" : "＋ 나도 담기"}
+          ${p.liked_by_me ? doodle("check") + "담았어요" : doodle("plus") + "나도 담기"}
         </button>
         ${owner}
       </div>
@@ -389,7 +443,7 @@ function categoryPicker(selected = "LUNCH") {
     ${Object.entries(CATEGORIES)
       .map(
         ([key, c]) =>
-          `<label><input type="radio" name="category" value="${key}" ${key === selected ? "checked" : ""}/><span>${c.emoji} ${c.label}</span></label>`
+          `<label><input type="radio" name="category" value="${key}" ${key === selected ? "checked" : ""}/><span>${catIcon(key)}${c.label}</span></label>`
       )
       .join("")}
   </div></div>`;
@@ -397,8 +451,8 @@ function categoryPicker(selected = "LUNCH") {
 
 function visibilityPicker(selected = "PUBLIC") {
   return `<div class="field">공개 범위<div class="pick">
-    <label><input type="radio" name="visibility" value="PUBLIC" ${selected === "PUBLIC" ? "checked" : ""}/><span>🔒 전체 공개 (익명)</span></label>
-    <label><input type="radio" name="visibility" value="FRIENDS" ${selected === "FRIENDS" ? "checked" : ""}/><span>👥 친구만 (닉네임 공개)</span></label>
+    <label><input type="radio" name="visibility" value="PUBLIC" ${selected === "PUBLIC" ? "checked" : ""}/><span>${doodle("lock")}전체 공개 (익명)</span></label>
+    <label><input type="radio" name="visibility" value="FRIENDS" ${selected === "FRIENDS" ? "checked" : ""}/><span>${doodle("friends")}친구만 (닉네임 공개)</span></label>
   </div></div>`;
 }
 
@@ -420,12 +474,12 @@ function renderHang() {
       <form data-action="hang">
         <div class="field">사진 (jpg · png · webp, 5MB 이하)
           <label class="photo-drop" id="drop">
-            <span id="drop-text">📸 눌러서 사진 고르기</span>
+            <span id="drop-text">${doodle("camera", "doodle big")}<br />눌러서 사진 고르기</span>
             <input type="file" name="image" accept="image/jpeg,image/png,image/webp" hidden data-action="preview" />
           </label>
         </div>
-        <label class="field">제목<input name="title" maxlength="50" placeholder="오늘 점심 김치찌개" required /></label>
-        <label class="field">내용<textarea name="content" maxlength="1000" placeholder="회사 앞 찌개집 최고" required></textarea></label>
+        <label class="field">제목<input name="title" maxlength="50" placeholder="${esc(CATEGORIES[selected].example.title)}" required /></label>
+        <label class="field">내용<textarea name="content" maxlength="1000" placeholder="${esc(CATEGORIES[selected].example.content)}" required></textarea></label>
         ${categoryPicker(selected)}
         ${visibilityPicker()}
         <hr class="dash" />
@@ -456,7 +510,7 @@ async function renderCart() {
         <div class="line"><span>CUSTOMER</span><b>${esc(me?.nickname)}</b></div>
         <div class="line"><span>EMAIL</span><b>${esc(me?.email)}</b></div>
         <div class="line"><span>ITEMS</span><b>${data.total}</b></div>
-        <div class="line"><span>TOTAL PULLS</span><b>✋ ${data.items.reduce((s, p) => s + p.pull_count, 0)}</b></div>
+        <div class="line"><span>TOTAL VIEWS</span><b>${doodle("eye")}${data.items.reduce((s, p) => s + p.pull_count, 0)}</b></div>
         <div class="line"><span>TOTAL GRABS</span><b>${data.items.reduce((s, p) => s + p.like_count, 0)}</b></div>
         <div class="barcode" aria-hidden="true"></div>
         <div class="thanks">THANKS FOR SHARING YOUR DAY</div>
@@ -497,19 +551,19 @@ async function renderFriends() {
 
       <h2>받은 요청 (${received.total})</h2>
       <ul class="list">
-        ${received.items.map((r) => row(`<span>📨 ${esc(r.nickname)}</span>
+        ${received.items.map((r) => row(`<span>${doodle("inbox")}${esc(r.nickname)}</span>
           <span><button class="btn small yellow" data-action="respond" data-id="${r.id}" data-status="ACCEPTED">수락</button>
           <button class="btn small" data-action="respond" data-id="${r.id}" data-status="REJECTED">거절</button></span>`)).join("") || `<li class="muted">없어요</li>`}
       </ul>
 
       <h2>보낸 요청 (${sent.total})</h2>
       <ul class="list">
-        ${sent.items.map((r) => row(`<span>📤 ${esc(r.nickname)}</span><span class="muted">대기 중</span>`)).join("") || `<li class="muted">없어요</li>`}
+        ${sent.items.map((r) => row(`<span>${doodle("send")}${esc(r.nickname)}</span><span class="muted">대기 중</span>`)).join("") || `<li class="muted">없어요</li>`}
       </ul>
 
       <h2>내 친구 (${friends.total})</h2>
       <ul class="list">
-        ${friends.items.map((f) => row(`<span>👥 ${esc(f.nickname)}</span>
+        ${friends.items.map((f) => row(`<span>${doodle("friends")}${esc(f.nickname)}</span>
           <button class="btn small" data-action="unfriend" data-nickname="${esc(f.nickname)}">삭제</button>`)).join("") || `<li class="muted">아직 없어요</li>`}
       </ul>
       <div class="barcode" aria-hidden="true"></div>
@@ -524,7 +578,7 @@ function renderAuth(mode) {
     <div class="sheet">
       ${clipHtml("sheet-clip")}
       <h1>${isSignup ? "NEW CUSTOMER" : "WELCOME BACK"}</h1>
-      <p class="center muted">${isSignup ? "가입하고 오늘의 티켓을 걸어 보세요" : "로그인하고 친구 티켓까지 뽑아 보세요"}</p>
+      <p class="center muted">${isSignup ? "가입하고 오늘의 티켓을 걸어 보세요" : "로그인하고 친구 티켓까지 구경해 보세요"}</p>
       <hr class="dash" />
       <form data-action="${mode}">
         <label class="field">이메일<input type="email" name="email" autocomplete="email" required /></label>
@@ -574,7 +628,7 @@ async function route() {
   if (page === "friends") return renderFriends();
   if (page === "login" || page === "signup") return renderAuth(page);
   if (page === "ticket") {
-    // #/ticket/5 -> 레일을 깔고 5번 티켓을 바로 뽑아서 보여 줌 (티켓 링크 공유용)
+    // #/ticket/5 -> 레일을 깔고 5번 티켓 상세를 바로 열어 줌 (티켓 링크 공유용)
     await renderRail();
     return openTicket(location.hash.split("/")[2]);
   }
@@ -632,7 +686,7 @@ document.addEventListener("click", async (e) => {
         const r = await api(`/posts/${p.id}/likes`, { method: "POST" });
         p.liked_by_me = true;
         p.like_count = r.like_count; // 서버가 알려 준 최신 담기 수
-        toast("나도 담았어요! 🛒");
+        toast("나도 담았어요!");
       }
       renderTicketDetail();
       return refreshAfterChange();
@@ -654,7 +708,7 @@ document.addEventListener("click", async (e) => {
     }
     if (action === "respond") {
       await api(`/friends/requests/${id}`, { method: "PATCH", json: { status: el.dataset.status } });
-      toast(el.dataset.status === "ACCEPTED" ? "친구가 됐어요! 👥" : "요청을 거절했어요.");
+      toast(el.dataset.status === "ACCEPTED" ? "친구가 됐어요!" : "요청을 거절했어요.");
       return renderFriends();
     }
     if (action === "unfriend") {
@@ -708,6 +762,15 @@ document.addEventListener("drop", (e) => {
 // 오늘만 보기 체크박스, 사진 미리보기
 document.addEventListener("change", (e) => {
   const action = e.target.dataset?.action;
+  // 글쓰기 폼에서 코너(카테고리)를 바꾸면 제목/내용 예시도 그 카테고리 걸로
+  const hangForm = e.target.closest?.('form[data-action="hang"]');
+  if (hangForm && e.target.name === "category") {
+    const example = CATEGORIES[e.target.value]?.example;
+    if (example) {
+      hangForm.elements.title.placeholder = example.title;
+      hangForm.elements.content.placeholder = example.content;
+    }
+  }
   if (action === "today") {
     state.feed.today = e.target.checked;
     renderRail();
