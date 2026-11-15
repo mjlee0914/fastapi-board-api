@@ -22,7 +22,9 @@
     <a href="#api-명세"><strong>API 명세 보기 »</strong></a>
     <br />
     <br />
-    <a href="http://3.25.130.252/docs">Swagger UI (배포 중)</a>
+    <a href="http://3.25.130.252/web/"><strong>웹에서 써 보기 »</strong></a>
+    &middot;
+    <a href="http://3.25.130.252/docs">Swagger UI</a>
     &middot;
     <a href="https://github.com/mjlee0914/fastapi-board-api/issues">버그 제보</a>
   </p>
@@ -51,6 +53,7 @@
     <li><a href="#api-명세">API 명세</a></li>
     <li><a href="#데이터-모델">데이터 모델</a></li>
     <li><a href="#배포">배포</a></li>
+    <li><a href="#프론트엔드">프론트엔드</a></li>
     <li><a href="#운영-기능">운영 기능</a></li>
     <li><a href="#테스트">테스트</a></li>
     <li><a href="#아키텍처">아키텍처</a></li>
@@ -313,6 +316,7 @@ erDiagram
 
 | 항목 | 주소 |
 | --- | --- |
+| 웹 프론트엔드 | http://3.25.130.252/web/ |
 | Swagger UI | http://3.25.130.252/docs |
 | OpenAPI JSON | http://3.25.130.252/openapi.json |
 | 헬스 체크 | http://3.25.130.252/health |
@@ -338,6 +342,24 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 # 코드 업데이트
 git pull && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 ```
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
+<!-- FRONTEND -->
+
+## 프론트엔드
+
+빌드 없이 쓰는 HTML/CSS/JS(`frontend/`)를 FastAPI가 `/web/`에서 같이 서빙합니다. API와 같은 주소라서 CORS 설정 없이 동작합니다.
+
+| 화면 | 주소 | 내용 |
+| --- | --- | --- |
+| 오늘의 레일 | `/web/#/rail` | 금속 레일에 집게로 걸린 티켓. 카테고리·인기순·오늘만 필터, 가로 스크롤 |
+| 티켓 뽑기 | `/web/#/ticket/{id}` | 레일에서 뽑아 내리는 영수증 상세. 나도 담기, 익명 리뷰, 수정·삭제 |
+| 티켓 걸기 | `/web/#/hang` | 사진 미리보기, 코너(카테고리), 공개 범위 선택 |
+| 내 카트 | `/web/#/cart` | 내 티켓과 영수증 형태의 합계 (뽑힌 횟수, 담기 수) |
+| 친구 | `/web/#/friends` | 닉네임으로 요청, 받은 요청 수락·거절, 친구 삭제 |
+
+디자인은 README 대표 이미지처럼 하늘과 언덕 배경, 빨간 집게, 영수증(고정폭 글꼴, 점선, 톱니, 바코드), 별 모양 딱지와 초록 말풍선 라벨로 구성했습니다. 사용자가 쓴 글은 모두 escape해서 넣어 XSS를 막습니다.
 
 <p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
@@ -427,7 +449,7 @@ tests/                 # pytest 권한 시나리오 테스트
 - [ ] 체크아웃 영수증 — 오늘 활동을 영수증으로 저장·공유
 - [ ] 누가 내 티켓을 뽑았는지 기록
 - [ ] S3 이미지 저장, Redis 캐시
-- [ ] 프론트엔드 — B급 키치 콜라주 + 영수증 감성
+- [x] 프론트엔드 — 티켓 레일 + 영수증 감성 (`/web/`)
 
 <p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 

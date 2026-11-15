@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 
@@ -41,6 +42,18 @@ app.include_router(friends.router)
 # 업로드한 사진 서빙: /uploads/abc.jpg 로 요청하면 uploads/abc.jpg 파일을 돌려줌
 Path(settings.UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+
+# 프론트엔드(frontend/ 폴더)를 /web/ 에서 서빙
+# API와 같은 주소라서 CORS, http/https 섞임 문제 x. html=True: /web/ 으로 오면 index.html 줌
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/web", StaticFiles(directory=FRONTEND_DIR, html=True), name="web")
+
+
+# 주소만 치고 들어오면(/) 프론트로 보내 줌. Swagger 문서에는 안 보이게
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse("/web/")
 
 
 # 서버가 살아 있는지/DB 연결 되는지 확인하는 주소

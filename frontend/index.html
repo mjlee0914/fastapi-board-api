@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What's in my cart?</title>
+  <meta name="description" content="익명으로 걸고, 뽑아 보는 오늘의 티켓" />
+  <!-- 폰트: 견출고딕 느낌(Black Han Sans) + 영수증 고정폭(Space Mono, 나눔고딕코딩) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic+Coding:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 배경: 하늘 + 구름 + 언덕 (README 사진 느낌) -->
+  <div class="scenery" aria-hidden="true">
+    <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+    <span class="hill h1"></span><span class="hill h2"></span><span class="hill h3"></span>
+  </div>
+
+  <header class="topbar">
+    <a class="logo" href="#/rail">
+      <span class="logo-spark s1">✦</span>
+      <span class="logo-text">WHAT'S IN<br />MY CART?</span>
+      <span class="logo-spark s2">✦</span>
+    </a>
+    <nav class="nav" id="nav"></nav>
+  </header>
+
+  <main id="app" class="app"></main>
+
+  <!-- 티켓 뽑기(상세) 모달 -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-back" data-action="close-modal"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
