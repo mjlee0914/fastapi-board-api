@@ -1,0 +1,11 @@
+.venv
+.env
+.git
+.specstory
+__pycache__
+*.pyc
+.pytest_cache
+uploads
+tests
+*.png
+.env.prod
