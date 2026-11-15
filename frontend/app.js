@@ -10,12 +10,20 @@ const CATEGORIES = {
   HAUL: { emoji: "🛍️", label: "산 거 자랑" },
   CHAT: { emoji: "💬", label: "잡담" },
 };
+const PRODUCTS = {
+  LUNCH: { label: "도시락", image: "assets/products/lunch.png" },
+  CAT: { label: "고양이 캔", image: "assets/products/cat.png" },
+  SKY: { label: "구름 포장", image: "assets/products/sky.png" },
+  HAUL: { label: "쇼핑백", image: "assets/products/haul.png" },
+  CHAT: { label: "탄산 캔", image: "assets/products/chat.png" },
+};
 const PAGE_SIZE = 12;
 
 // 상태: 토큰(로그인), 내 정보
 const state = {
   token: safeGet("token"),
   me: null,
+  selectedProduct: null,
   feed: { category: null, sort: "latest", today: false, page: 1, items: [], total: 0 },
 };
 
@@ -163,6 +171,51 @@ function ticketHtml(p) {
     </article>`;
 }
 
+// 화면: 빈 카트에 상품을 담아 글쓰기 시작
+
+function productHtml([category, product]) {
+  return `<button class="product" draggable="true" data-action="pick-product" data-cat="${category}"
+    aria-label="${product.label}을 카트에 담아 ${CATEGORIES[category].label} 글쓰기">
+    <img src="${product.image}" alt="" draggable="false" />
+    <span>${product.label}</span>
+  </button>`;
+}
+
+function renderHome() {
+  app().innerHTML = `
+    <section class="cart-studio">
+      <div class="studio-copy">
+        <h1>오늘 뭐 담았어?</h1>
+        <p>상품 하나를 골라 빈 카트에 담아 보세요.</p>
+      </div>
+      <div class="studio-layout">
+        <div class="product-rack" aria-label="글 카테고리 상품">
+          ${Object.entries(PRODUCTS).map(productHtml).join("")}
+        </div>
+        <div class="cart-drop" id="cart-drop" data-action="cart-drop" aria-label="상품을 놓는 빈 카트">
+          <img class="empty-cart" src="assets/empty-cart.png" alt="빈 빨간 장바구니" />
+        </div>
+      </div>
+      <p class="studio-help">컴퓨터에서는 드래그 · 휴대폰에서는 상품을 톡 눌러도 돼요</p>
+    </section>`;
+}
+
+function chooseProduct(category) {
+  const product = PRODUCTS[category];
+  if (!product) return;
+  state.selectedProduct = category;
+  const drop = document.getElementById("cart-drop");
+  if (drop) {
+    drop.querySelector(".cart-item")?.remove();
+    const img = document.createElement("img");
+    img.className = "cart-item";
+    img.src = product.image;
+    img.alt = "";
+    drop.append(img);
+  }
+  setTimeout(() => { location.hash = "#/hang"; }, 520);
+}
+
 // 화면: 오늘의 레일 (피드)
 
 async function renderRail() {
@@ -178,12 +231,11 @@ async function renderRail() {
 
   app().innerHTML = `
     <section>
-      <span class="flyer-label">TODAY'S RAIL</span>
-      <p class="flyer-sub">HANG ONE PHOTO · PULL ONE STORY — 티켓을 눌러서 뽑아 보세요</p>
+      <p class="flyer-sub">티켓을 눌러서 뽑아 보세요</p>
       <div class="toolbar">
         ${chips}
         <button class="chip ${f.sort === "popular" ? "on" : ""}" data-action="sort">${f.sort === "popular" ? "🔥 인기순" : "🕒 최신순"}</button>
-        <label class="toggle"><input type="checkbox" data-action="today" ${f.today ? "checked" : ""}/> 오늘 걸린 것만</label>
+        <label class="toggle"><input type="checkbox" data-action="today" ${f.today ? "checked" : ""}/><span class="box" aria-hidden="true"></span><span class="toggle-text">오늘 걸린 것만</span></label>
       </div>
       <div class="rail-wrap">
         <div class="rail" aria-hidden="true"></div>
@@ -351,12 +403,20 @@ function visibilityPicker(selected = "PUBLIC") {
 }
 
 function renderHang() {
+  const selected = state.selectedProduct && PRODUCTS[state.selectedProduct]
+    ? state.selectedProduct
+    : "LUNCH";
+  const product = PRODUCTS[selected];
   app().innerHTML = `
     <div class="sheet">
       ${clipHtml("sheet-clip")}
-      <h1>HANG A TICKET</h1>
-      <p class="center muted">사진 한 장으로 오늘을 담아 레일에 걸어요</p>
+      <h1>ADD TO MY CART</h1>
+      <p class="center muted">고른 상품으로 오늘의 영수증을 만들어요</p>
       <hr class="dash" />
+      <div class="selected-product-line">
+        <img src="${product.image}" alt="" />
+        <span><b>${product.label}</b><br />${CATEGORIES[selected].label} 코너</span>
+      </div>
       <form data-action="hang">
         <div class="field">사진 (jpg · png · webp, 5MB 이하)
           <label class="photo-drop" id="drop">
@@ -366,10 +426,10 @@ function renderHang() {
         </div>
         <label class="field">제목<input name="title" maxlength="50" placeholder="오늘 점심 김치찌개" required /></label>
         <label class="field">내용<textarea name="content" maxlength="1000" placeholder="회사 앞 찌개집 최고" required></textarea></label>
-        ${categoryPicker()}
+        ${categoryPicker(selected)}
         ${visibilityPicker()}
         <hr class="dash" />
-        <button class="grab">GRAB! 레일에 걸기</button>
+        <button class="grab">카트에 담기</button>
       </form>
       <div class="barcode" aria-hidden="true"></div>
     </div>`;
@@ -483,15 +543,15 @@ function renderAuth(mode) {
 // 상단 메뉴
 
 function renderNav() {
-  const route = location.hash.split("/")[1] || "rail";
+  const route = location.hash.split("/")[1] || "home";
   const link = (r, text, cls = "") => `<a href="#/${r}" class="${cls} ${route === r ? "active" : ""}">${text}</a>`;
   document.getElementById("nav").innerHTML = state.me
-    ? link("rail", "🧵 오늘의 레일") +
-      link("cart", "🛒 내 카트") +
-      link("friends", "👥 친구") +
-      link("hang", "＋ 티켓 걸기", "hang") +
+    ? link("home", "담기") +
+      link("rail", "오늘의 레일") +
+      link("cart", "내 카트") +
+      link("friends", "친구") +
       `<button data-action="logout">로그아웃</button>`
-    : link("rail", "🧵 오늘의 레일") + link("login", "로그인") + link("signup", "회원가입", "hang");
+    : link("home", "담기") + link("rail", "오늘의 레일") + link("login", "로그인") + link("signup", "회원가입", "hang");
 }
 
 // 라우터: 주소의 # 뒤를 보고 화면을 바꿈 ex) #/cart -> 내 카트
@@ -500,7 +560,7 @@ const app = () => document.getElementById("app");
 const NEED_LOGIN = ["cart", "hang", "friends"];
 
 async function route() {
-  const page = location.hash.split("/")[1] || "rail";
+  const page = location.hash.split("/")[1] || "home";
   if (NEED_LOGIN.includes(page) && !state.me) {
     toast("로그인이 필요해요.", true);
     location.hash = "#/login";
@@ -508,6 +568,7 @@ async function route() {
   }
   renderNav();
   window.scrollTo(0, 0);
+  if (page === "home") return renderHome();
   if (page === "cart") return renderCart();
   if (page === "hang") return renderHang();
   if (page === "friends") return renderFriends();
@@ -536,6 +597,10 @@ document.addEventListener("click", async (e) => {
     if (action === "open-ticket") {
       e.preventDefault();
       return openTicket(id);
+    }
+    if (action === "pick-product") {
+      e.preventDefault();
+      return chooseProduct(el.dataset.cat);
     }
     if (action === "close-modal") return closeModal();
     if (action === "logout") {
@@ -609,6 +674,37 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && e.target.matches?.(".ticket")) openTicket(e.target.dataset.id);
 });
 
+// 데스크톱 드래그 앤 드롭. 모바일은 위 click 처리로 같은 흐름을 사용한다.
+document.addEventListener("dragstart", (e) => {
+  const product = e.target.closest?.(".product");
+  if (!product) return;
+  product.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "copy";
+  e.dataTransfer.setData("text/plain", product.dataset.cat);
+});
+document.addEventListener("dragend", (e) => {
+  e.target.closest?.(".product")?.classList.remove("dragging");
+  document.getElementById("cart-drop")?.classList.remove("over");
+});
+document.addEventListener("dragover", (e) => {
+  const drop = e.target.closest?.("#cart-drop");
+  if (!drop) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "copy";
+  drop.classList.add("over");
+});
+document.addEventListener("dragleave", (e) => {
+  const drop = e.target.closest?.("#cart-drop");
+  if (drop && !drop.contains(e.relatedTarget)) drop.classList.remove("over");
+});
+document.addEventListener("drop", (e) => {
+  const drop = e.target.closest?.("#cart-drop");
+  if (!drop) return;
+  e.preventDefault();
+  drop.classList.remove("over");
+  chooseProduct(e.dataTransfer.getData("text/plain"));
+});
+
 // 오늘만 보기 체크박스, 사진 미리보기
 document.addEventListener("change", (e) => {
   const action = e.target.dataset?.action;
@@ -650,14 +746,15 @@ document.addEventListener("submit", async (e) => {
       safeSet("token", access_token);
       await loadMe();
       toast(`어서 오세요, ${state.me.nickname}님!`);
-      location.hash = "#/rail";
+      location.hash = state.selectedProduct ? "#/hang" : "#/home";
       return;
     }
     if (action === "hang") {
       const image = fd.get("image");
       if (image && !image.size) fd.delete("image"); // 사진 안 고르면 빈 파일이 들어감 -> 빼고 보냄
       const post = await api("/posts", { method: "POST", form: fd });
-      toast(`티켓 ${ticketNo(post.ticket_no)} 걸었어요! GRAB!`);
+      toast(`영수증 ${ticketNo(post.ticket_no)}을 카트에 담았어요.`);
+      state.selectedProduct = null;
       state.feed = { ...state.feed, category: null, today: false, sort: "latest" };
       location.hash = "#/rail";
       return;
@@ -688,7 +785,7 @@ document.addEventListener("submit", async (e) => {
 
 // 상세 모달에서 바꾼 내용(담기, 리뷰)을 뒤에 있는 레일/카트에도 반영
 function refreshAfterChange() {
-  const page = location.hash.split("/")[1] || "rail";
+  const page = location.hash.split("/")[1] || "home";
   if (page === "rail") loadFeed(true);
   if (page === "cart") renderCart();
 }
@@ -698,6 +795,9 @@ function refreshAfterChange() {
 window.addEventListener("hashchange", route);
 (async () => {
   await loadMe();
-  if (!location.hash) location.hash = "#/rail";
+  document.getElementById("intro")?.addEventListener("animationend", (e) => {
+    if (e.animationName === "intro-away") e.currentTarget.remove();
+  });
+  if (!location.hash) location.hash = "#/home";
   else route();
 })();
