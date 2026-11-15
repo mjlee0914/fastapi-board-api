@@ -184,7 +184,7 @@ README.md
 | 받은/보낸 요청 목록            | `GET /friends/requests?type=received\|sent`             | 로그인                       |
 | 요청 수락·거절                 | `PATCH /friends/requests/{request_id}` (body: `status`) | 받은 사람만                  |
 | 친구 목록                      | `GET /friends`                                          | 로그인                       |
-| 친구 삭제                      | `DELETE /friends/{user_id}`                             | 로그인                       |
+| 친구 삭제                      | `DELETE /friends/{nickname}`                             | 로그인                       |
 
 **REST 규칙**
 
@@ -286,4 +286,4 @@ README.md
 - **내 글 여부**: 모든 글·댓글 응답에 `is_mine`(bool) 포함 → FE가 수정/삭제 버튼 표시. 권한 검증은 서버가 내부 `author_id`로 수행
 - **댓글 작성자**: 글마다 익명 번호. 글 작성자는 "글쓴이", 나머지는 처음 댓글 단 순서대로 "익명1", "익명2"… (같은 사람은 같은 번호)
 - 응답에 다른 사용자의 `user_id`/`email`을 노출하지 않는다 (필요할 때도 nickname만)
-- **친구 요청은 닉네임으로**: `POST /friends/requests` body `{"nickname": "지우"}`
+- **친구 요청·삭제는 닉네임으로**: `POST /friends/requests` body `{"nickname": "지우"}`, `DELETE /friends/{nickname}`

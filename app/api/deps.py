@@ -8,8 +8,9 @@ from app.core.exceptions import Unauthorized
 from app.core.security import decode_access_token
 from app.db.session import get_db
 from app.models import User
+from app.schemas.common import PageParams
 
-bearer_scheme = HTTPBearer(auto_error=False)
+bearer_scheme = HTTPBearer(auto_error=False, description="로그인 응답의 access_token을 붙여넣기")
 
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 
@@ -35,3 +36,8 @@ async def get_current_user(user: Annotated[User | None, Depends(get_optional_use
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 OptionalUser = Annotated[User | None, Depends(get_optional_user)]
+
+
+
+# 페이지네이션 (?page=1&size=20). PageParams는 schemas/common.py에 있음
+Pagination = Annotated[PageParams, Depends()]

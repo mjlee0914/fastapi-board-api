@@ -1,6 +1,6 @@
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 
-class Base(declarative_base):
+class Base(DeclarativeBase):
     """모든 모델(테이블 클래스)이 상속받는 부모 클래스"""
     
     # Base의 역할
