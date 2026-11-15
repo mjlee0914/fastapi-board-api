@@ -40,3 +40,6 @@ class EmailAlreadyExists(AppException):
 
 class NicknameAlreadyExists(AppException):
     status_code, code, message = 409, "NICKNAME_ALREADY_EXISTS", "이미 사용 중인 닉네임입니다."
+
+class ValidationFailed(AppException):
+    status_code, code, message = 422, "VALIDATION_ERROR", "입력값이 올바르지 않습니다."

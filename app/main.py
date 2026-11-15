@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.routes import auth, users
 from app.core.config import settings
 from app.core.error_handlers import register_exception_handlers
 from app.db.session import get_db
@@ -16,6 +17,8 @@ app = FastAPI(
 )
 
 register_exception_handlers(app) 
+app.include_router(auth.router)
+app.include_router(users.router)
 
 # 서버가 살아 있는지/DB 연결 되는지 확인하는 주소
 # EC2 배포 뒤에도 이 주소로 서버 상태 확인함. 정상 배포 여부 바로 확인 가능. ex) curl http://<EC2-IP>/health
