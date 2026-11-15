@@ -14,7 +14,7 @@
   </p>
 
   <p align="center">
-    <b>오늘 뭐 담았어?</b> — 익명으로 걸고, 뽑아 보는 오늘의 티켓
+    <b>오늘 뭐 담았어?</b> — 익명으로 걸고, 구경하는 오늘의 티켓
     <br />
     사진 한 장으로 오늘을 담아 티켓 레일에 거는 커뮤니티 게시판 API
     <br />
@@ -80,7 +80,7 @@
 | ------------ | ------------------------------------------------------------------------ | --------------------------- |
 | 사진 글 쓰기 | 🎫 티켓을 레일에 **걸기**                                                | `POST /posts`               |
 | 피드 보기    | 🧵 레일에 걸린 티켓들 (오늘의 전단지)                                    | `GET /posts`                |
-| 글 상세 보기 | ✋ 티켓을 **뽑아서** 보기                                                | `GET /posts/{post_id}`      |
+| 글 상세 보기 | 👀 티켓을 눌러서 **조회**                                                | `GET /posts/{post_id}`      |
 | 카테고리     | 🏪 마트 코너 (오늘 점심 / 고양이 자랑 / 오늘의 하늘 / 산 거 자랑 / 잡담) | `?category=`                |
 | 내가 쓴 글   | 🛒 내 카트                                                               | `GET /users/me/posts`       |
 | 댓글         | 📝 상품 리뷰                                                             | `/posts/{post_id}/comments` |
@@ -89,7 +89,7 @@
 티켓에는 레일 감성을 살리는 정보가 함께 붙습니다.
 
 - **주문 번호 `ticket_no`** — 그날 몇 번째로 걸린 티켓인지 (`#005`)
-- **뽑힌 횟수 `pull_count`** — 티켓이 몇 번 뽑혔는지 (상세 조회 시 +1)
+- **조회수 `pull_count`** — 다른 사람이 상세 조회할 때마다 +1 (작성자 본인 조회는 제외)
 - **오늘의 레일** — `GET /posts?today=true`로 오늘 걸린 티켓만
 
 ### 익명성 원칙
@@ -198,7 +198,7 @@ curl -X POST http://localhost:8000/posts \
 | Users    | 내 정보                        | `GET /users/me`                                                | 로그인                |
 | Users    | 내 카트 (내가 쓴 글)           | `GET /users/me/posts`                                          | 로그인                |
 | Posts    | 피드 (티켓 레일)               | `GET /posts?category=&sort=latest\|popular&today=&page=&size=` | 비회원 허용           |
-| Posts    | 글 상세 (티켓 뽑기)            | `GET /posts/{post_id}`                                         | 공개 범위에 따라      |
+| Posts    | 글 상세 조회                   | `GET /posts/{post_id}`                                         | 공개 범위에 따라      |
 | Posts    | 글 작성 (사진 포함, multipart) | `POST /posts`                                                  | 로그인                |
 | Posts    | 글 수정                        | `PATCH /posts/{post_id}`                                       | 작성자만              |
 | Posts    | 글 삭제                        | `DELETE /posts/{post_id}`                                      | 작성자만              |
@@ -278,7 +278,7 @@ erDiagram
         string image_url "nullable"
         enum category "LUNCH | CAT | SKY | HAUL | CHAT"
         enum visibility "PUBLIC | FRIENDS"
-        int pull_count "뽑힌 횟수"
+        int pull_count "조회수"
         datetime created_at
         datetime updated_at
     }
@@ -353,13 +353,14 @@ git pull && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 
 | 화면 | 주소 | 내용 |
 | --- | --- | --- |
-| 오늘의 레일 | `/web/#/rail` | 금속 레일에 집게로 걸린 티켓. 카테고리·인기순·오늘만 필터, 가로 스크롤 |
-| 티켓 뽑기 | `/web/#/ticket/{id}` | 레일에서 뽑아 내리는 영수증 상세. 나도 담기, 익명 리뷰, 수정·삭제 |
-| 티켓 걸기 | `/web/#/hang` | 사진 미리보기, 코너(카테고리), 공개 범위 선택 |
-| 내 카트 | `/web/#/cart` | 내 티켓과 영수증 형태의 합계 (뽑힌 횟수, 담기 수) |
+| 담기 (홈) | `/web/#/home` | 상품 그림을 빈 카트에 드래그(모바일은 탭)해서 글쓰기 시작 |
+| 오늘의 레일 | `/web/#/rail` | 레일에 집게로 걸린 영수증 티켓. 카테고리·최신/인기순·오늘만 필터, 가로 스크롤 |
+| 티켓 상세 | `/web/#/ticket/{id}` | 영수증 형태의 상세. 조회수, 나도 담기, 익명 리뷰, 수정·삭제 |
+| 카트에 담기 | `/web/#/hang` | 사진 미리보기, 코너(카테고리)별 예시 문구, 공개 범위 선택 |
+| 내 카트 | `/web/#/cart` | 내 티켓과 영수증 형태의 합계 (조회수, 담기 수) |
 | 친구 | `/web/#/friends` | 닉네임으로 요청, 받은 요청 수락·거절, 친구 삭제 |
 
-디자인은 README 대표 이미지처럼 하늘과 언덕 배경, 빨간 집게, 영수증(고정폭 글꼴, 점선, 톱니, 바코드), 별 모양 딱지와 초록 말풍선 라벨로 구성했습니다. 사용자가 쓴 글은 모두 escape해서 넣어 XSS를 막습니다.
+디자인은 흰 배경에 손글씨 폰트(Gaegu)와 손그림 상품 일러스트, 손그림 선 아이콘(SVG), 레일에 빨간 집게로 걸린 영수증으로 구성했습니다. 사용자가 쓴 글은 모두 escape해서 넣어 XSS를 막습니다.
 
 <p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
@@ -447,7 +448,7 @@ tests/                 # pytest 권한 시나리오 테스트
 
 - [ ] 실시간 알림 (SSE/WebSocket) — "누군가 방금 점심을 담았어요"
 - [ ] 체크아웃 영수증 — 오늘 활동을 영수증으로 저장·공유
-- [ ] 누가 내 티켓을 뽑았는지 기록
+- [ ] 누가 내 티켓을 조회했는지 기록
 - [ ] S3 이미지 저장, Redis 캐시
 - [x] 프론트엔드 — 티켓 레일 + 영수증 감성 (`/web/`)
 

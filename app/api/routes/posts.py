@@ -76,8 +76,8 @@ async def create_post(
 @router.get(
     "/{post_id}",
     response_model=PostResponse,
-    summary="글 상세 (티켓 뽑기)",
-    description="티켓 하나를 뽑아 봅니다. 다른 사람이 뽑으면 `pull_count`가 1 올라갑니다. "
+    summary="글 상세 조회",
+    description="티켓 하나를 자세히 봅니다. 다른 사람이 조회하면 조회수(`pull_count`)가 1 올라갑니다. "
     "볼 권한이 없는 FRIENDS 글은 존재를 숨기기 위해 404를 돌려줍니다.",
     responses=error_responses(exc.PostNotFound, exc.TokenExpired),
 )

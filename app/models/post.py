@@ -23,7 +23,7 @@ class Post(Base):
     image_url: Mapped[str | None] = mapped_column(String(500))
     category: Mapped[Category] = mapped_column(Enum(Category, name="category"), index=True)
     visibility: Mapped[Visibility] = mapped_column(Enum(Visibility, name="visibility"), default=Visibility.PUBLIC)
-    pull_count: Mapped[int] = mapped_column(default=0, server_default="0")  # 티켓이 뽑힌 횟수
+    pull_count: Mapped[int] = mapped_column(default=0, server_default="0")  # 조회수 (다른 사람이 상세 조회한 횟수)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()

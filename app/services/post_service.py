@@ -155,14 +155,14 @@ async def list_posts(
 
 
 async def get_post_detail(db: AsyncSession, post_id: int, viewer: User | None) -> PostResponse:
-    """티켓 뽑기 (상세 조회). 다른 사람이 뽑으면 pull_count +1"""
+    """티켓 상세 조회. 다른 사람이 보면 조회수(pull_count) +1"""
     row = await _fetch_one(db, post_id, viewer)
     if row is None:
         raise PostNotFound()
     result = _to_response(row, viewer)
 
     if not result.is_mine:  # 내 글을 내가 보는 건 안 셈
-        # pull_count = pull_count + 1 을 DB에서 바로 계산 -> 동시에 여러 명이 뽑아도 숫자가 안 꼬임
+        # pull_count = pull_count + 1 을 DB에서 바로 계산 -> 동시에 여러 명이 봐도 숫자가 안 꼬임
         # (파이썬에서 읽고 +1 해서 저장하면, 두 명이 동시에 읽었을 때 1만 올라가는 문제 생김)
         result.pull_count = await db.scalar(
             update(Post)

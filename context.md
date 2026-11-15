@@ -118,7 +118,7 @@ README.md
 - id, author_id(FK → User), title, content, image_url(nullable)
 - category: Enum (`LUNCH`, `CAT`, `SKY`, `HAUL`, `CHAT` …)
 - visibility: Enum (`PUBLIC`, `FRIENDS`)
-- pull_count: int (티켓이 뽑힌 횟수, 기본 0) — 13번 참고
+- pull_count: int (조회수, 기본 0) — 13번 참고
 - created_at, updated_at
 - 관계: author(N:1), comments(1:N, cascade delete), likes(1:N, cascade delete)
 
@@ -251,7 +251,7 @@ README.md
 - 체크아웃 영수증: 오늘 활동을 영수증으로 뽑아 저장·공유 (`Receipt` 모델)
 - 팀/그룹 카트 (`Team`, `Post.team_id`)
 - S3 이미지 저장, Redis 캐시
-- 누가 내 티켓을 뽑았는지 기록 (`Pull` 테이블)
+- 누가 내 티켓을 조회했는지 기록 (`Pull` 테이블)
 
 ---
 
@@ -272,11 +272,11 @@ README.md
 ## 13. 티켓 레일 콘셉트 & 익명성 (2026-11-15 결정)
 
 ### 티켓 레일
-글을 쓰면 주문 티켓처럼 레일(hanger)에 걸리고, 다른 사람이 티켓을 뽑아서(상세 조회) 본다. 주문 접수 게임의 "티켓을 거는" 메커니즘만 차용하고, 디자인은 12번(B급 키치 콜라주 + 영수증 감성)을 따른다.
+글을 쓰면 주문 티켓처럼 레일(hanger)에 걸리고, 다른 사람이 티켓을 눌러서 조회한다. 주문 접수 게임의 "티켓을 거는" 메커니즘만 차용하고, 디자인은 12번(B급 키치 콜라주 + 영수증 감성)을 따른다.
 
-- 글 작성 = 티켓 걸기 (`POST /posts`), 레일 = 피드 (`GET /posts`), 뽑기 = 상세 조회 (`GET /posts/{post_id}`)
+- 글 작성 = 티켓 걸기 (`POST /posts`), 레일 = 피드 (`GET /posts`), 티켓 조회 = 상세 조회 (`GET /posts/{post_id}`)
 - **주문 번호 `ticket_no`**: 그날(KST) 몇 번째로 걸린 티켓인지 (#005). 저장하지 않고 조회 시 계산
-- **뽑힌 횟수 `pull_count`**: posts 컬럼. 상세 조회 시 +1
+- **조회수 `pull_count`**: posts 컬럼. 다른 사람이 상세 조회 시 +1 (2026-11-15: '뽑기' 대신 단순 조회로 변경)
 - **오늘의 레일**: `GET /posts?today=true` → 오늘 걸린 티켓만
 
 ### 익명성

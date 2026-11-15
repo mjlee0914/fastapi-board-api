@@ -75,7 +75,7 @@ class PostResponse(BaseModel):
     author: AuthorInfo | None = Field(description="PUBLIC 글은 익명이라 null, FRIENDS 글은 친구끼리라 닉네임 공개")
     is_mine: bool = Field(description="내 글인지 -> 프론트가 수정/삭제 버튼 보여줄지 결정")
     ticket_no: int = Field(description="주문 번호. 그날(KST) 몇 번째로 걸린 티켓인지 ex) 5 -> #005")
-    pull_count: int = Field(description="티켓이 뽑힌 횟수 (다른 사람이 상세 조회한 횟수)")
+    pull_count: int = Field(description="조회수 (다른 사람이 상세 조회한 횟수, 작성자 본인 조회는 제외)")
     like_count: int = Field(description="나도 담기 수")
     comment_count: int
     liked_by_me: bool = Field(description="내가 담았는지 (비회원은 항상 false)")

@@ -72,7 +72,7 @@ async def test_pull_count_and_ticket_no(client):
     assert (first["ticket_no"], second["ticket_no"]) == (1, 2)  # 오늘 1번째, 2번째 티켓
 
     await client.get(f"/posts/{first['id']}", headers=author)  # 내가 내 글 보면 안 셈
-    r = await client.get(f"/posts/{first['id']}", headers=other)  # 남이 뽑음 -> +1
+    r = await client.get(f"/posts/{first['id']}", headers=other)  # 남이 조회 -> +1
     assert r.json()["pull_count"] == 1
 
 

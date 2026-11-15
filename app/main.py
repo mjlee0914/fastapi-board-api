@@ -19,7 +19,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     description=(
         "사진 공유 커뮤니티 게시판 API. 오늘 담은 일상을 티켓으로 걸어요 🛒\n\n"
-        "- 글 = 티켓. 쓰면 레일에 걸리고(`POST /posts`), 다른 사람이 뽑아서(`GET /posts/{id}`) 봅니다.\n"
+        "- 글 = 티켓. 쓰면 레일에 걸리고(`POST /posts`), 다른 사람이 눌러서 조회(`GET /posts/{id}`)합니다.\n"
         "- 익명성: PUBLIC 글과 댓글은 익명, FRIENDS 글만 친구에게 닉네임이 보입니다.\n"
         "- 인증: `POST /auth/login`으로 받은 토큰을 오른쪽 위 **Authorize**에 붙여넣으세요.\n"
         '- 모든 에러는 `{"error": {"code", "message", "details"}}` 형태입니다.\n'

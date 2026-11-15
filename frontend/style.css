@@ -1,5 +1,5 @@
 :root {
-  --paper: #fffdf5; --paper-deep: #f4efdf; --ink: #292824; --pencil: #66625a;
+  --paper: #fffdf5; --paper-deep: #f4efdf; --ink: #3f3f3f; /* 모든 글씨 기본색 = 랜딩 문구 색 */ --pencil: #7a7a7a; /* 보조 글씨 */
   --red: #ed5b2b; --red-dark: #bd3e20; --green: #24804f; --blue: #3978bb; --yellow: #efb72d;
   --mono: "Gaegu", "Apple SD Gothic Neo", cursive; /* 본문도 홈과 같은 손글씨 */
   --title-gray: #3f3f3f; /* 인트로 문구: 새까만 색 말고 짙은 회색 */
@@ -34,7 +34,7 @@ a { color: inherit; }
   max-width: 1180px; margin: 0 auto; padding: 24px clamp(18px,4vw,48px) 10px;
   display: flex; align-items: baseline; justify-content: space-between; gap: 18px; flex-wrap: wrap;
 }
-.logo { font: 700 clamp(24px,3vw,36px)/1 var(--drawn); color: var(--red-dark); text-decoration: none; transform: rotate(-1deg); }
+.logo { font: 700 clamp(24px,3vw,36px)/1 var(--drawn); color: var(--ink); text-decoration: none; transform: rotate(-1deg); }
 .nav { display: flex; align-items: center; gap: clamp(12px,2.4vw,28px); flex-wrap: wrap; }
 .nav a,.nav button {
   appearance: none; border: 0; padding: 2px 0; background: none; cursor: pointer; text-decoration: none;
@@ -42,11 +42,17 @@ a { color: inherit; }
 }
 .nav a:hover,.nav button:hover { color: var(--ink); }
 .nav a.active { color: var(--ink); border-bottom-color: var(--red); }
-.nav .hang { color: var(--red-dark); }
+.nav .hang { color: var(--ink); }
+/* 언어 전환 탭: 다른 탭과 같은 글씨 + 지구본 손그림, 둥근 테두리로 살짝 구분 */
+.nav .lang-btn {
+  display: inline-flex; align-items: center; gap: 4px; padding: 1px 10px 2px;
+  border: 1.5px solid var(--pencil); border-radius: 999px; font-size: 17px;
+}
+.nav .lang-btn:hover { color: var(--ink); border-color: var(--ink); }
 .app { width: min(1160px,100%); margin: 0 auto; padding: 10px clamp(18px,4vw,48px) 100px; }
 .cart-studio { min-height: calc(100vh - 100px); display: grid; align-content: center; gap: 12px; }
 .studio-copy { text-align: center; margin: 0 auto 4px; }
-.studio-copy h1 { margin: 0; font: 700 clamp(42px,6vw,76px)/.9 var(--drawn); color: var(--red); transform: rotate(-1deg); }
+.studio-copy h1 { margin: 0; font: 700 clamp(42px,6vw,76px)/.9 var(--drawn); color: var(--ink); transform: rotate(-1deg); }
 .studio-copy p { margin: 10px 0 0; color: var(--pencil); font-size: 14px; }
 .studio-layout { display: grid; grid-template-columns: minmax(280px,1fr) minmax(300px,1.1fr); align-items: center; gap: clamp(16px,4vw,64px); }
 .product-rack { display: grid; grid-template-columns: repeat(3,minmax(92px,1fr)); gap: 10px; align-items: end; }
@@ -73,7 +79,7 @@ a { color: inherit; }
   content: ""; position: absolute; left: 0; right: 0; bottom: -9px; height: 10px;
   background: linear-gradient(135deg,#fffefa 50%,transparent 51%) 0 0/12px 10px repeat-x;
 }
-.sheet h1 { margin: 0 0 6px; font: 42px/.9 var(--drawn); text-align: center; color: var(--red-dark); }
+.sheet h1 { margin: 0 0 6px; font: 42px/.9 var(--drawn); text-align: center; color: var(--ink); }
 .sheet h2 { margin: 18px 0 8px; font-size: 18px; }
 .sheet-clip { display: none; }
 .dash { border: 0; border-top: 1px dashed #aaa49a; margin: 14px 0; }
@@ -87,23 +93,23 @@ a { color: inherit; }
 .pick label { cursor: pointer; }
 .pick input { position: absolute; opacity: 0; pointer-events: none; }
 .pick span { display: inline-block; padding: 2px 0; border-bottom: 2px solid transparent; font: 19px var(--drawn); color: var(--pencil); }
-.pick input:checked + span { color: var(--red-dark); border-bottom-color: var(--red); }
+.pick input:checked + span { color: var(--ink); border-bottom-color: var(--red); } /* 글씨는 회색, 선택 표시는 빨간 밑줄 */
 .photo-drop { display: grid; place-items: center; min-height: 150px; margin-top: 8px; padding: 12px; border: 1px dashed #aaa49a; cursor: pointer; background: rgba(246,240,222,.35); text-align: center; }
 .photo-drop input { display: none; }
 .photo-drop img { max-width: 72%; max-height: 190px; transform: rotate(-2deg); }
 .selected-product-line { display: flex; align-items: center; gap: 12px; margin: 4px 0 18px; color: var(--pencil); }
 .selected-product-line img { width: 72px; height: 72px; object-fit: contain; }
 .btn,.grab { appearance: none; border: 0; border-bottom: 2px solid currentColor; background: transparent; padding: 5px 1px; cursor: pointer; font-weight: 700; color: var(--ink); box-shadow: none; }
-.btn:hover,.grab:hover { color: var(--red-dark); }
-.btn.red,.btn.yellow { background: transparent; color: var(--red-dark); }
+.btn:hover,.grab:hover { color: var(--ink); border-bottom-color: var(--red); }
+.btn.red,.btn.yellow { background: transparent; color: var(--ink); }
 .btn.small { padding: 1px; font-size: 15px; }
 .btn:disabled,.grab:disabled { opacity: .45; cursor: wait; }
-.grab { display: block; width: max-content; margin: 22px auto 0; font: 28px var(--drawn); color: var(--red-dark); }
-.flyer-label { font: 46px var(--drawn); color: var(--red-dark); }
+.grab { display: block; width: max-content; margin: 22px auto 0; font: 28px var(--drawn); color: var(--ink); border-bottom-color: var(--red); } /* 주요 버튼만 빨간 밑줄로 포인트 */
+.flyer-label { font: 46px var(--drawn); color: var(--ink); }
 .flyer-sub { display: block; color: var(--pencil); margin: 3px 0 14px; font-size: 18px; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 12px 0 24px; }
 .chip,.toggle { border: 0; border-bottom: 1px solid transparent; background: none; padding: 2px 0; cursor: pointer; color: var(--pencil); font-size: 14px; }
-.chip.on { color: var(--red-dark); border-bottom-color: var(--red); }
+.chip.on { color: var(--ink); border-bottom-color: var(--red); }
 .chip { display: inline-flex; align-items: center; gap: 3px; }
 
 /* 카테고리 아이콘: 홈 상품 그림을 작게. 살짝 기울여서 스티커 느낌 */
@@ -132,7 +138,7 @@ a { color: inherit; }
   content: "✓"; position: absolute; left: 1px; top: -9px;
   font: 700 22px/1 var(--drawn); color: var(--red); transform: rotate(-10deg);
 }
-.toggle input:checked ~ .toggle-text { color: var(--red-dark); }
+.toggle input:checked ~ .toggle-text { color: var(--ink); }
 .toggle input:focus-visible + .box { outline: 2px solid var(--red); outline-offset: 2px; }
 .rail-wrap { position: relative; margin-top: 28px; }
 /* 레일: 연필로 그린 쇠막대 느낌 (테두리 + 밝은 줄 하나) */
@@ -174,9 +180,19 @@ a { color: inherit; }
 .sticker { width: 100%; aspect-ratio: 1; object-fit: cover; transform: rotate(-1.5deg); }
 .sticker.placeholder { display: grid; place-items: center; background: var(--paper-deep); }
 .sticker.placeholder img { width: 62%; height: 62%; object-fit: contain; transform: rotate(-6deg); }
-.starburst { position: absolute; right: -8px; top: 65px; color: var(--red-dark); font: 23px var(--drawn); transform: rotate(8deg); }
-.starburst small { display: block; font: 13px var(--mono); }
-.bubble { display: inline-flex; align-items: center; gap: 4px; margin-top: 7px; color: var(--green); font: 18px var(--drawn); }
+/* 담기 수: 사진 오른쪽 아래 모서리에 붙인 하트 스티커 (티켓 밖으로 안 나감) */
+.photo-wrap { position: relative; }
+.heart-badge {
+  position: absolute; right: -4px; bottom: -10px; width: 46px; height: 46px; z-index: 2;
+  display: grid; place-items: center; transform: rotate(8deg); transition: transform .15s;
+}
+.heart-badge svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.heart-badge path { fill: #fff; stroke: var(--red); stroke-width: 2.4; stroke-linejoin: round; filter: drop-shadow(0 2px 2px rgba(61,50,33,.18)); }
+.heart-badge b { position: relative; margin-top: -3px; font: 700 17px/1 var(--drawn); color: var(--red-dark); }
+.heart-badge.on path { fill: var(--red); stroke: #fff; }
+.heart-badge.on b { color: #fff; }
+.ticket:hover .heart-badge { transform: rotate(-4deg) scale(1.08); }
+.bubble { display: inline-flex; align-items: center; gap: 4px; margin-top: 7px; color: var(--ink); font: 18px var(--drawn); }
 .lock { font-size: 13px; }
 .empty-rail { padding: 26px 0; color: var(--pencil); }
 .more-btn { align-self: center; flex: 0 0 auto; }
