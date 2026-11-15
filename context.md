@@ -252,6 +252,7 @@ README.md
 - 팀/그룹 카트 (`Team`, `Post.team_id`)
 - S3 이미지 저장, Redis 캐시
 - 누가 내 티켓을 조회했는지 기록 (`Pull` 테이블)
+- 날짜별 레일 보기: `GET /posts?date=YYYY-MM-DD` (KST 0시~다음 날 0시 범위 조회, `today`와 합치기) + 프론트 날짜 넘기기
 
 ---
 
