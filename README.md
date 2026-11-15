@@ -22,7 +22,7 @@
     <a href="#api-명세"><strong>API 명세 보기 »</strong></a>
     <br />
     <br />
-    <a href="http://<EC2-IP>/docs">Swagger UI (배포 예정)</a>
+    <a href="http://3.25.130.252/docs">Swagger UI (배포 중)</a>
     &middot;
     <a href="https://github.com/mjlee0914/fastapi-board-api/issues">버그 제보</a>
   </p>
@@ -50,6 +50,7 @@
     <li><a href="#사용법">사용법</a></li>
     <li><a href="#api-명세">API 명세</a></li>
     <li><a href="#데이터-모델">데이터 모델</a></li>
+    <li><a href="#배포">배포</a></li>
     <li><a href="#운영-기능">운영 기능</a></li>
     <li><a href="#테스트">테스트</a></li>
     <li><a href="#아키텍처">아키텍처</a></li>
@@ -306,6 +307,40 @@ erDiagram
 
 <p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
+<!-- DEPLOYMENT -->
+
+## 배포
+
+| 항목 | 주소 |
+| --- | --- |
+| Swagger UI | http://3.25.130.252/docs |
+| OpenAPI JSON | http://3.25.130.252/openapi.json |
+| 헬스 체크 | http://3.25.130.252/health |
+
+```
+브라우저 ──(80)──▶ [AWS EC2 · Ubuntu 24.04]
+                   ├─ nginx   리버스 프록시 (외부에 열린 포트는 80 하나)
+                   ├─ app     FastAPI + uvicorn (시작할 때 alembic upgrade head 자동 실행)
+                   └─ db      PostgreSQL 16 (외부 비공개, 데이터는 Docker 볼륨에 보존)
+```
+
+- 보안 그룹: HTTP 80은 전체 공개, SSH 22는 관리자 IP만 허용. 8000·5432는 외부에 열지 않음
+- 비밀값(DB 비밀번호, `SECRET_KEY`)은 서버의 `.env.prod`에만 두고 Git·이미지에 포함하지 않음
+- nginx `client_max_body_size 6M`으로 5MB 사진 업로드 허용
+
+서버에서 실행·업데이트하는 방법:
+
+```sh
+git clone https://github.com/mjlee0914/fastapi-board-api.git && cd fastapi-board-api
+cp .env.prod.example .env.prod   # 비밀번호와 SECRET_KEY를 랜덤 값으로 변경
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+
+# 코드 업데이트
+git pull && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+```
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
 <!-- OPERATIONS -->
 
 ## 운영 기능
@@ -384,7 +419,7 @@ tests/                 # pytest 권한 시나리오 테스트
 - [x] 친구 기능 + 공개 범위 필터
 - [x] 미들웨어(CORS, 요청 로깅, `X-Process-Time`) + 피드 캐싱 + N+1 점검
 - [x] 권한 시나리오 테스트
-- [ ] AWS EC2 배포 (Docker Compose + Nginx)
+- [x] AWS EC2 배포 (Docker Compose + Nginx)
 
 **나중에**
 
