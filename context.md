@@ -118,6 +118,7 @@ README.md
 - id, author_id(FK → User), title, content, image_url(nullable)
 - category: Enum (`LUNCH`, `CAT`, `SKY`, `HAUL`, `CHAT` …)
 - visibility: Enum (`PUBLIC`, `FRIENDS`)
+- pull_count: int (티켓이 뽑힌 횟수, 기본 0) — 13번 참고
 - created_at, updated_at
 - 관계: author(N:1), comments(1:N, cascade delete), likes(1:N, cascade delete)
 
@@ -179,7 +180,7 @@ README.md
 | 댓글 삭제                      | `DELETE /comments/{comment_id}`                         | 댓글 작성자만                |
 | 좋아요                         | `POST /posts/{post_id}/likes`                           | 로그인                       |
 | 좋아요 취소                    | `DELETE /posts/{post_id}/likes`                         | 로그인                       |
-| 친구 요청                      | `POST /friends/requests` (body: `addressee_id`)         | 로그인                       |
+| 친구 요청                      | `POST /friends/requests` (body: `nickname`)             | 로그인                       |
 | 받은/보낸 요청 목록            | `GET /friends/requests?type=received\|sent`             | 로그인                       |
 | 요청 수락·거절                 | `PATCH /friends/requests/{request_id}` (body: `status`) | 받은 사람만                  |
 | 친구 목록                      | `GET /friends`                                          | 로그인                       |
@@ -250,6 +251,7 @@ README.md
 - 체크아웃 영수증: 오늘 활동을 영수증으로 뽑아 저장·공유 (`Receipt` 모델)
 - 팀/그룹 카트 (`Team`, `Post.team_id`)
 - S3 이미지 저장, Redis 캐시
+- 누가 내 티켓을 뽑았는지 기록 (`Pull` 테이블)
 
 ---
 
@@ -264,3 +266,24 @@ README.md
   - 타일/하늘/체크 패턴 배경 위에 요소를 겹겹이 콜라주
   - "GRAB!", "WHAT'S IN my CART?" 같은 카피
 - 화면 흐름: 공개 벽(오늘의 전단지) → 내 카트 → (나중에) 계산대 체크아웃 "삑!" → 영수증 저장·공유
+
+---
+
+## 13. 티켓 레일 콘셉트 & 익명성 (2026-11-15 결정)
+
+### 티켓 레일
+글을 쓰면 주문 티켓처럼 레일(hanger)에 걸리고, 다른 사람이 티켓을 뽑아서(상세 조회) 본다. 주문 접수 게임의 "티켓을 거는" 메커니즘만 차용하고, 디자인은 12번(B급 키치 콜라주 + 영수증 감성)을 따른다.
+
+- 글 작성 = 티켓 걸기 (`POST /posts`), 레일 = 피드 (`GET /posts`), 뽑기 = 상세 조회 (`GET /posts/{post_id}`)
+- **주문 번호 `ticket_no`**: 그날(KST) 몇 번째로 걸린 티켓인지 (#005). 저장하지 않고 조회 시 계산
+- **뽑힌 횟수 `pull_count`**: posts 컬럼. 상세 조회 시 +1
+- **오늘의 레일**: `GET /posts?today=true` → 오늘 걸린 티켓만
+
+### 익명성
+로그인은 하지만, 다른 사람에게 보이는 정보는 최소화한다.
+
+- **글 작성자**: `PUBLIC` 글은 익명(`author: null`), `FRIENDS` 글은 닉네임 공개 (어차피 친구만 볼 수 있음)
+- **내 글 여부**: 모든 글·댓글 응답에 `is_mine`(bool) 포함 → FE가 수정/삭제 버튼 표시. 권한 검증은 서버가 내부 `author_id`로 수행
+- **댓글 작성자**: 글마다 익명 번호. 글 작성자는 "글쓴이", 나머지는 처음 댓글 단 순서대로 "익명1", "익명2"… (같은 사람은 같은 번호)
+- 응답에 다른 사용자의 `user_id`/`email`을 노출하지 않는다 (필요할 때도 nickname만)
+- **친구 요청은 닉네임으로**: `POST /friends/requests` body `{"nickname": "지우"}`
